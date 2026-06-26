@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-06-26T13:00:00+00:00",
+  "criteria": {
+    "make": "Land Rover",
+    "models": ["Range Rover", "Range Rover Sport", "Range Rover Velar", "Range Rover Evoque"],
+    "zip": "28078",
+    "distance_miles": 50
+  },
+  "count": 3,
+  "listings": [
+    {
+      "vin": "SALGS2RU0PA000001",
+      "year": 2022,
+      "make": "Land Rover",
+      "model": "Range Rover Sport",
+      "trim": "HSE Dynamic",
+      "exterior_color": "Santorini Black",
+      "mileage": 28400,
+      "price": 61995,
+      "title_status": "Clean",
+      "cpo": true,
+      "dealer_name": "Land Rover Charlotte",
+      "city": "Matthews",
+      "state": "NC",
+      "url": "https://example.com/listing/1",
+      "photo": null,
+      "score": 92,
+      "verdict": "Low-miles black HSE Dynamic, CPO, clean title, priced right for the trim.",
+      "flags": []
+    },
+    {
+      "vin": "SALYK2EX0LA000002",
+      "year": 2021,
+      "make": "Land Rover",
+      "model": "Range Rover Velar",
+      "trim": "R-Dynamic S",
+      "exterior_color": "Eiger Gray",
+      "mileage": 41200,
+      "price": 44500,
+      "title_status": "Clean",
+      "cpo": false,
+      "dealer_name": "Lake Norman Chrysler",
+      "city": "Cornelius",
+      "state": "NC",
+      "url": "https://example.com/listing/2",
+      "photo": null,
+      "score": 78,
+      "verdict": "Solid gray Velar at a fair price; mileage slightly above the sweet spot.",
+      "flags": ["Above mileage sweet spot", "Not CPO"]
+    },
+    {
+      "vin": "SALZL2GX0MH000003",
+      "year": 2020,
+      "make": "Land Rover",
+      "model": "Range Rover Evoque",
+      "trim": "SE",
+      "exterior_color": "Fuji White",
+      "mileage": 52800,
+      "price": 31200,
+      "title_status": "Clean",
+      "cpo": false,
+      "dealer_name": "CarMax Pineville",
+      "city": "Pineville",
+      "state": "NC",
+      "url": "https://example.com/listing/3",
+      "photo": null,
+      "score": 61,
+      "verdict": "Priced well but white misses preferred colors and miles are high.",
+      "flags": ["Color outside preference", "High mileage"]
+    }
+  ]
+}
