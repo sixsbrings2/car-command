@@ -1,0 +1,42 @@
+name: car-search
+
+on:
+  schedule:
+    - cron: "0 13 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run agent
+        env:
+          AUTODEV_API_KEY: ${{ secrets.AUTODEV_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python car_agent.py
+
+      - name: Commit refreshed feed
+        run: |
+          git config user.name "car-command-bot"
+          git config user.email "actions@github.com"
+          git add data/listings.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: refresh listings feed [skip ci]"
+            git push
+          fi
