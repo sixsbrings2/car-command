@@ -50,30 +50,47 @@ def _build_params(cfg: dict, model: str, page: int) -> dict:
     return params
 
 
+def _as_dict(x) -> dict:
+    """Return x if it's a dict, else an empty dict. Lets nested .get() chains never crash."""
+    return x if isinstance(x, dict) else {}
+
+
+def _name_of(x):
+    """A 'dealer' (or similar) field may be a dict with 'name', a bare string, or missing."""
+    if isinstance(x, dict):
+        return x.get("name")
+    if isinstance(x, str):
+        return x
+    return None
+
+
 def _normalize(raw: dict) -> dict:
     """Flatten Auto.dev's nested response into the shape the rest of the app expects."""
-    vehicle = raw.get("vehicle", {}) or {}
-    retail = raw.get("retailListing", {}) or {}
-    dealer = retail.get("dealer", {}) or raw.get("dealer", {}) or {}
+    # Auto.dev's response shape varies between listings: a field that's an object
+    # on one record can be a bare string (or absent) on another. Guard everything.
+    d = _as_dict(raw)
+    vehicle = _as_dict(d.get("vehicle"))
+    retail = _as_dict(d.get("retailListing"))
+    location = _as_dict(d.get("location"))
 
     return {
-        "vin": vehicle.get("vin") or raw.get("vin"),
+        "vin": vehicle.get("vin") or d.get("vin"),
         "year": vehicle.get("year"),
         "make": vehicle.get("make"),
         "model": vehicle.get("model"),
         "trim": vehicle.get("trim"),
         "exterior_color": vehicle.get("exteriorColor") or vehicle.get("color"),
         "mileage": vehicle.get("mileage") or vehicle.get("miles"),
-        "price": retail.get("price"),
+        "price": retail.get("price") or d.get("price"),
         "title_status": retail.get("titleStatus"),
         "cpo": retail.get("cpo"),
-        "condition": retail.get("condition") or vehicle.get("condition"),
-        "dealer_name": dealer.get("name"),
-        "city": retail.get("city") or (raw.get("location") or {}).get("city"),
-        "state": retail.get("state") or (raw.get("location") or {}).get("state"),
-        "url": retail.get("vdpUrl") or retail.get("url") or raw.get("url"),
-        "photo": (raw.get("photoUrls") or [None])[0] or vehicle.get("photoUrl"),
-        "description": retail.get("description") or "",
+        "condition": retail.get("condition") or vehicle.get("condition") or d.get("condition"),
+        "dealer_name": _name_of(retail.get("dealer")) or _name_of(d.get("dealer")),
+        "city": retail.get("city") or location.get("city"),
+        "state": retail.get("state") or location.get("state"),
+        "url": retail.get("vdpUrl") or retail.get("url") or d.get("url"),
+        "photo": (d.get("photoUrls") or [None])[0] or vehicle.get("photoUrl"),
+        "description": retail.get("description") or d.get("description") or "",
         "_source": "auto.dev",
     }
 
@@ -100,7 +117,11 @@ def fetch_listings(cfg: dict) -> list[dict]:
                 break
 
             for raw in rows:
-                listing = _normalize(raw)
+                try:
+                    listing = _normalize(raw)
+                except Exception as e:
+                    print(f"  skipped a malformed listing: {e}")
+                    continue
                 vin = listing.get("vin")
                 if not vin or vin in seen_vins:
                     continue
