@@ -1,0 +1,35 @@
+# Car Command — search criteria
+# Edit this file to change what the agent hunts for. Nothing else needs to change.
+
+search:
+  make: "Land Rover"
+  models:
+    - "Range Rover"
+    - "Range Rover Sport"
+    - "Range Rover Velar"
+    - "Range Rover Evoque"
+  zip: "28078"          # Huntersville / Lake Norman
+  distance_miles: 50
+  condition: "used"     # used only
+  year_min: 2019
+  year_max: 2024
+  price_min: 20000
+  price_max: 75000
+  mileage_max: 70000
+
+# Preferences feed the AI scorer, not the API filter. These are "softer" —
+# a listing that misses one can still rank if it's strong elsewhere.
+preferences:
+  exterior_colors:        # strong preference, not a hard cutoff
+    - "black"
+    - "gray"
+    - "grey"
+    - "silver"
+  mileage_sweet_spot: 35000   # lower is better; used to reward low-mileage finds
+  value_anchor: "Reward listings priced below comparable trims at similar mileage."
+  trim_notes: "Autobiography / HSE / Dynamic trims preferred. Flag salvage/branded titles, accident history, or 'as-is' wholesale language as disqualifying."
+
+# How many of the top AI-scored listings to keep in the dashboard feed.
+output:
+  top_n: 40
+  min_score: 55   # drop anything the AI scores below this
